@@ -1,1 +1,1 @@
-# xfmr
+# xfmr - A Sample Spring Cloud Stream Application 

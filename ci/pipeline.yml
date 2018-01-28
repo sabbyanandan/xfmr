@@ -1,0 +1,156 @@
+---
+resource_types:
+- name: artifactory-resource
+  type: docker-image
+  source:
+    repository: springio/artifactory-resource
+    tag: 0.0.3
+
+resources: 
+
+# XFMR
+- name: artifactory-repo
+  type: artifactory-resource
+  source:
+    uri: ((artifactory_uri))
+    username: ((artifactory_username))
+    password: ((artifactory_password))
+    build_name: xfmr
+
+- name: xfmr
+  type: git
+  source:
+    uri: https://github.com/sabbyanandan/xfmr.git
+    branch: master
+    ignore_paths:
+    - ci/docker-image/*
+
+- name: xfmr-latest
+  type: docker-image
+  source:
+    repository: sabby/xfmr
+    username:   ((docker_username))
+    password:   ((docker_password))
+
+# Docker Image
+- name: alpine-latest
+  type: docker-image
+  source:
+    repository: alpine
+    tag:        latest
+
+- name: xfmr-register-latest
+  type: docker-image
+  source:
+    repository: sabby/xfmr-register
+    username:   ((docker_username))
+    password:   ((docker_password))
+
+- name: docker-image
+  type: git
+  source:
+    uri:    https://github.com/sabbyanandan/xfmr.git
+    branch: master
+    paths:
+    - ci/docker-image/*
+
+# Groups
+groups:
+- name: xfmr
+  jobs:
+  - build-xfmr
+  - register-xfmr
+  - update-xfmr
+- name: docker
+  jobs:
+  - docker-image
+
+jobs:
+
+# XFMR
+- name: build-xfmr
+  serial: true
+  public: true
+  plan:
+  - get: xfmr
+    trigger: true
+  - task: build
+    file: xfmr/ci/deploy.yml
+  - aggregate:
+    - put: artifactory-repo
+      params:
+        repo: libs-snapshot-local
+        build_number: "${BUILD_ID}"
+        folder: distribution-repository
+        build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
+        disable_checksum_uploads: true
+    - put: xfmr-latest
+      params:
+        build: docker-image
+        tag: docker-image/projectVersion
+
+- name: register-xfmr
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: xfmr
+      passed:
+      - build-xfmr
+    - get: distribution-repository
+      resource: artifactory-repo
+      trigger: true
+      passed:
+      - build-xfmr
+      params:
+        generate_maven_metadata: true
+    - get: docker-image
+      resource: xfmr-latest
+      trigger: true
+      passed:
+      - build-xfmr
+  - aggregate:
+    - task: register-docker
+      file: xfmr/ci/register-docker-image.yml
+    - task: register-maven
+      file: xfmr/ci/register-maven-app.yml
+
+- name: update-xfmr
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: xfmr
+      passed:
+      - register-xfmr
+    - get: distribution-repository
+      resource: artifactory-repo
+      trigger: true
+      passed:
+      - register-xfmr
+      params:
+        generate_maven_metadata: true
+    - get: docker-image
+      resource: xfmr-latest
+      trigger: true
+      passed:
+      - register-xfmr
+  - aggregate:
+#     - task: update-docker
+#       file: xfmr/ci/update-docker.yml
+    - task: update-maven
+      file: xfmr/ci/update-maven-app.yml
+
+# Docker Image
+- name: docker-image
+  public: true
+  plan:
+  - aggregate:
+    - get: docker-image
+      trigger: true
+    - get: alpine-latest
+      trigger: true
+  - put: xfmr-register-latest
+    params:
+      build: docker-image/ci/docker-image
+
