@@ -1,0 +1,61 @@
+= Continuous Delivery for Data Pipelines
+
+This repo includes the demonstration of CI/CD workflow in Spring Cloud Data Flow. To apply CI/CD to update a streaming data processing pipeline in SCDF, this demo assumes link:https://content.pivotal.io/blog/spring-cloud-data-flow-1-3-continuous-delivery-usability-improvements-and-function-runner[1.3 GA] release is in use.
+
+== Spring Cloud Stream Processor
+
+The `xfmr` processor consumes an incoming payload, transforms it (_adds a simple prefix_), and sends the processed payload to an output channel for downstream processing.
+
+You can build and run the tests via:
+
+----
+mvn clean install
+----
+
+=== Custom App Registration
+
+Once the application is ready and uploaded to a remote repository, you can link:https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.RELEASE/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[register] the application in SCDF.
+
+----
+dataflow:>app register --name xfmr --type processor --uri maven://com.example:xfmr:0.0.1.BUILD-SNAPSHOT
+----
+
+Along with the `xfmr` processor, this demo also uses the link:http://cloud.spring.io/spring-cloud-stream-app-starters/[out-of-the-box] `http` source and `log` sink applications.
+
+== Spring Cloud Skipper
+
+As a companion-server to SCDF, Skipper manages the granular application-lifecycle behind the scenes. You can read more from Skipper's link:https://docs.spring.io/spring-cloud-skipper/docs/1.0.0.RELEASE/reference/htmlsingle/#three-minute-tour[refefrence guide]. Skipper is provisioned with both Cloud Foundry (PWS) and Kubernetes (GKE) platform profiles.
+
+----
+dataflow:>
+----
+
+== Spring Cloud Data Flow
+
+With out-of-the-box apps and the `xfmr` processor registered in SCDF, the following streaming-pipeline can be defined and deployed to a target platform such as Cloud Foundry or Kubernetes. For example, the following deploys the `fooxfmr` stream to Cloud Foundry for which the credentials are pre-loaded and made available in SCDF via Skipper. You can read more about this in the link:https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.RELEASE/reference/htmlsingle/#spring-cloud-dataflow-streams-skipper[reference guide].
+
+----
+dataflow:>stream create fooxfmr --definition "http | xfmr | log"
+
+dataflow:>stream deploy fooxfmr --platformName cf
+----
+
+== Concourse
+
+link:http://concourse.ci/[Concourse] is used as the CI system. It monitors, builds, tests, packages, publishes, and registers the `xfmr` changes to SCDF and finally also invokes the "stream-update" endpoint in SCDF to continuously deploy the incremental changes to targeted platforms. The `ci` folder includes the CI pipeline and the associated concourse-job specifics.
+
+You can run the pipeline with the following command.
+
+----
+fly -t tutorial sp -p xfmr -c ci/pipeline.yml -l ci/credentials.yml
+----
+
+Once setup, we can access the `xfmr` pipeline from Concourse.
+
+image:ci/xfmr-ci-pipeline.png
+
+NOTE: `credentials.yml` is intentionally not added to the repo, it is ignored. You need to create your file with credentials to use it.
+
+== Data
+
+To simulate incoming data, `data.sh` script generates random security numbers of format `111-222-3333`, and it makes CURL call to the `http-source` application running on target platforms.
