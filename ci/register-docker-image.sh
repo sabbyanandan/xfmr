@@ -10,6 +10,6 @@ echo "Registering xfmr ${THE_VERSION}"
 
 curl \
 	-X \
-	POST "http://35.225.226.55/apps/processor/xfmr?force=true" \
+	POST "http://35.193.155.145/apps/processor/xfmr?force=true" \
 	-uuser:password \
     -d "uri=docker:sabby/xfmr:${THE_VERSION}"
