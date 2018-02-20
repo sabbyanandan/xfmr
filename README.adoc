@@ -14,7 +14,7 @@ mvn clean install
 
 === Custom App Registration
 
-Once the application is ready and uploaded to a remote repository, you can link:https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.RELEASE/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[register] the application in SCDF.
+Once the application is ready and uploaded to a remote repository (maven-artifactory or docker-hub), you can link:https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.RELEASE/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[register] the application in SCDF.
 
 ----
 dataflow:>app register --name xfmr --type processor --uri maven://com.example:xfmr:0.0.1.BUILD-SNAPSHOT
@@ -24,7 +24,7 @@ Along with the `xfmr` processor, this demo also uses the link:http://cloud.sprin
 
 == Spring Cloud Skipper
 
-As a companion-server to SCDF, Skipper manages the granular application-lifecycle behind the scenes. You can read more from Skipper's link:https://docs.spring.io/spring-cloud-skipper/docs/1.0.0.RELEASE/reference/htmlsingle/#three-minute-tour[refefrence guide]. Skipper is provisioned with both Cloud Foundry (PWS) and Kubernetes (GKE) platform profiles.
+As a companion-server to SCDF, Skipper manages the granular application-lifecycle behind the scenes. You can read more from Skipper's link:https://docs.spring.io/spring-cloud-skipper/docs/1.0.0.RELEASE/reference/htmlsingle/#three-minute-tour[refefrence guide]. Skipper is provisioned with both Cloud Foundry (PWS) and Kubernetes (GKE) platform coordinates.
 
 ----
 dataflow:>stream platform-list
@@ -58,9 +58,9 @@ fly -t tutorial sp -p xfmr -c ci/pipeline.yml -l ci/credentials.yml
 
 Once setup, we can access the `xfmr` pipeline from Concourse.
 
-image:ci/xfmr-ci-pipeline.png
+image::https://github.com/sabbyanandan/xfmr/raw/master/ci/xfmr-ci-pipeline.png[Pipeline]
 
-NOTE: `credentials.yml` is intentionally not added to the repo, it is ignored. You need to create your file with credentials to use it.
+NOTE: `credentials.yml` is intentionally ignored from the repo. You need to create a file with credentials to setup the CI pipeline.
 
 == Data
 
