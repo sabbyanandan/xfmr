@@ -10,7 +10,7 @@ echo "Updating xfmr in K8S with ${THE_VERSION} of Docker Image"
 
 curl \
 	-X \
-	POST "http://35.225.226.55/streams/deployments/update/barxfmr" \
+	POST "http://35.224.13.209/streams/deployments/update/barxfmr" \
 	-uuser:password \
     -d '{"updateProperties":{"version.xfmr":"'"${THE_VERSION}"'"},"releaseName":"barxfmr","packageIdentifier":{"packageName":"barxfmr"}}' \
     -H "Content-Type: application/json"
