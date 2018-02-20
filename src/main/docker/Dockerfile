@@ -1,5 +1,4 @@
-
-FROM java:8-jre-alpine
+FROM java:8-alpine
 
 ADD xfmr-*.jar xfmr.jar
 
