@@ -1,4 +1,4 @@
-FROM java:8-alpine
+FROM openjdk:8-jdk-alpine
 
 ADD xfmr-*.jar xfmr.jar
 
