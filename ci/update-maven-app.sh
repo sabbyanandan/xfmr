@@ -6,7 +6,7 @@ cd xfmr
 
 THE_VERSION=$(grep -o '<revision[^"]*' pom.xml | sed -e 's/<revision>\(.*\)<\/revision>/\1/')
 
-echo "Registering xfmr ${THE_VERSION}"
+echo "Updating xfmr in CF with ${THE_VERSION} of Maven artifact"
 
 curl \
 	-X \

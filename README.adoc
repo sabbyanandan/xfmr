@@ -27,7 +27,13 @@ Along with the `xfmr` processor, this demo also uses the link:http://cloud.sprin
 As a companion-server to SCDF, Skipper manages the granular application-lifecycle behind the scenes. You can read more from Skipper's link:https://docs.spring.io/spring-cloud-skipper/docs/1.0.0.RELEASE/reference/htmlsingle/#three-minute-tour[refefrence guide]. Skipper is provisioned with both Cloud Foundry (PWS) and Kubernetes (GKE) platform profiles.
 
 ----
-dataflow:>
+dataflow:>stream platform-list
+╔════════╤════════════╤═════════════════════════════════════════════════════════════════════════════════════════╗
+║  Name  │    Type    │                                       Description                                       ║
+╠════════╪════════════╪═════════════════════════════════════════════════════════════════════════════════════════╣
+║minikube│kubernetes  │master url = [https://kubernetes.default.svc/], namespace = [default], api version = [v1]║
+║cf      │cloudfoundry│org = [scdf-ci], space = [space-sabby], url = [https://api.run.pivotal.io]               ║
+╚════════╧════════════╧═════════════════════════════════════════════════════════════════════════════════════════╝
 ----
 
 == Spring Cloud Data Flow
@@ -37,7 +43,7 @@ With out-of-the-box apps and the `xfmr` processor registered in SCDF, the follow
 ----
 dataflow:>stream create fooxfmr --definition "http | xfmr | log"
 
-dataflow:>stream deploy fooxfmr --platformName cf
+dataflow:>stream deploy --name fooxfmr --platformName cf
 ----
 
 == Concourse

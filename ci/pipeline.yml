@@ -136,8 +136,8 @@ jobs:
       passed:
       - register-xfmr
   - aggregate:
-#     - task: update-docker
-#       file: xfmr/ci/update-docker.yml
+    - task: update-docker
+      file: xfmr/ci/update-docker-app.yml
     - task: update-maven
       file: xfmr/ci/update-maven-app.yml
 
