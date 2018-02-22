@@ -12,7 +12,7 @@ You can build and run the tests via:
 mvn clean install
 ----
 
-=== Custom App Registration
+==== Custom App Registration
 
 Once the application is ready and uploaded to a remote repository (e.g., maven-artifactory or docker-hub), you can link:https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.RELEASE/reference/htmlsingle/#spring-cloud-dataflow-register-stream-apps[register] the application in SCDF.
 
@@ -25,7 +25,7 @@ Along with the `xfmr` processor, this demo also uses the link:http://cloud.sprin
 
 == Spring Cloud Skipper
 
-As a companion-server to SCDF, Skipper manages the granular application-lifecycle behind the scenes. You can read more from Skipper's link:https://docs.spring.io/spring-cloud-skipper/docs/1.0.0.RELEASE/reference/htmlsingle/#three-minute-tour[refefrence guide]. Skipper is provisioned with both Cloud Foundry (PWS) and Kubernetes (GKE) platform coordinates.
+As a companion-server to SCDF, Skipper manages the granular application-lifecycle behind the scenes. You can read more from Skipper's link:https://docs.spring.io/spring-cloud-skipper/docs/1.0.0.RELEASE/reference/htmlsingle/#three-minute-tour[refefrence guide]. Skipper is provisioned with both Cloud Foundry (on PWS) and Kubernetes (on GKE) platform coordinates.
 
 [source,bash,options=nowrap]
 ----
@@ -33,29 +33,31 @@ dataflow:>stream platform-list
 ╔════════╤════════════╤═════════════════════════════════════════════════════════════════════════════════════════╗
 ║  Name  │    Type    │                                       Description                                       ║
 ╠════════╪════════════╪═════════════════════════════════════════════════════════════════════════════════════════╣
-║minikube│kubernetes  │master url = [https://kubernetes.default.svc/], namespace = [default], api version = [v1]║
-║cf      │cloudfoundry│org = [scdf-ci], space = [space-sabby], url = [https://api.run.pivotal.io]               ║
+║k8s-prod│kubernetes  │master url = [https://kubernetes.default.svc/], namespace = [default], api version = [v1]║
+║cf-prod │cloudfoundry│org = [scdf-ci], space = [space-sabby], url = [https://api.run.pivotal.io]               ║
 ╚════════╧════════════╧═════════════════════════════════════════════════════════════════════════════════════════╝
 ----
 
 == Spring Cloud Data Flow
 
-With the out-of-the-box apps and the `xfmr` processor registered in SCDF, the following streaming-pipeline can be defined and deployed to a target platform such as Cloud Foundry or Kubernetes. For example, the following deploys the `fooxfmr` stream to Cloud Foundry for which the credentials are pre-loaded and made available in SCDF via Skipper. You can read more about the configurations in the link:https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.RELEASE/reference/htmlsingle/#spring-cloud-dataflow-streams-skipper[reference guide].
+With the out-of-the-box apps and the `xfmr` processor registered in SCDF, a streaming-pipeline can be defined and deployed to a target platform such as Cloud Foundry or Kubernetes. For example, the following deploys the `fooxfmr` stream to Cloud Foundry (via `cf-prod`); for which the credentials are pre-loaded and made available in SCDF via Skipper. You can read more about the configurations in the link:https://docs.spring.io/spring-cloud-dataflow/docs/1.3.0.RELEASE/reference/htmlsingle/#spring-cloud-dataflow-streams-skipper[reference guide].
 
 [source,bash,options=nowrap]
 ----
 dataflow:>stream create fooxfmr --definition "http | xfmr | log"
 
-dataflow:>stream deploy --name fooxfmr --platformName cf
+dataflow:>stream deploy --name fooxfmr --platformName cf-prod
 ----
 
 image::https://github.com/sabbyanandan/xfmr/raw/master/images/scdf-streaming-pipeline.png[Streaming Pipeline]
 
 == Concourse
 
-link:http://concourse.ci/[Concourse] is used as the CI system. It monitors the git-commits to build automatically, test, package, and register the `xfmr` application in SCDF. Finally, also, the CI pipeline invokes the "stream-update" endpoint in SCDF to continuously deploy the incremental changes to targeted platforms. For more details, review the `ci` folder, which includes the CI-code and the associated concourse-jobs.
+link:http://concourse.ci/[Concourse] is used as the CI system. Concourse monitors the git-commits to build the project, test, package, and register the `xfmr` application in SCDF. Finally, also, the CI pipeline invokes the "stream-update" endpoint in SCDF to continuously deploy the incremental changes to targeted platforms. For more details, review the `ci` folder, which includes the CI-pipeline-code and the associated concourse-job configurations.
 
 You can run the pipeline with the following command.
+
+NOTE: This CI pipeline assumes a `fooxfmr` and `barxfmr` streams running in Cloud Foundry and Kubernetes respectively. The goal of this pipeline is to demonstrate how a change to business logic via git-commit would automatically trigger the build, run the tests, and finally register and rolling-upgrade the newly built business logic over a "live" stream processing data pipeline.
 
 [source,bash,options=nowrap]
 ----
@@ -70,4 +72,4 @@ NOTE: `credentials.yml` is intentionally ignored from the repo. You need to crea
 
 == Test Data
 
-To simulate incoming data, `data.sh` script generates random security numbers of format `xxx-xx-xxxx`. The script posts CURL commands to the `http-source` application running on target platforms with the generated security number as the payload.
+To simulate incoming data, `data.sh` script generates random security numbers of format `xxx-xx-xxxx`. The script posts CURL commands to the `http-source` application with the generated security number as the payload.
