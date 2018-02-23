@@ -55,9 +55,9 @@ image::https://github.com/sabbyanandan/xfmr/raw/master/images/scdf-streaming-pip
 
 link:http://concourse.ci/[Concourse] is used as the CI system. Concourse monitors the git-commits to build the project, test, package, and register the `xfmr` application in SCDF. Finally, also, the CI pipeline invokes the "stream-update" endpoint in SCDF to continuously deploy the incremental changes to targeted platforms. For more details, review the `ci` folder, which includes the CI-pipeline-code and the associated concourse-job configurations.
 
-You can run the pipeline with the following command.
-
 NOTE: This CI pipeline assumes a `fooxfmr` and `barxfmr` streams running in Cloud Foundry and Kubernetes respectively. The goal of this pipeline is to demonstrate how a change to business logic via git-commit would automatically trigger the build, run the tests, and finally register and rolling-upgrade the newly built business logic over a "live" stream processing data pipeline.
+
+You can run the pipeline with the following command.
 
 [source,bash,options=nowrap]
 ----
