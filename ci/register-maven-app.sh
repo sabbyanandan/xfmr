@@ -8,7 +8,8 @@ THE_VERSION=$(grep -o '<revision[^"]*' pom.xml | sed -e 's/<revision>\(.*\)<\/re
 
 echo "Registering xfmr ${THE_VERSION}"
 
+# Replace `<ROUTE>` with the route of SCDF-server running in CF.
 curl \
 	-X \
-	POST "http://sabby-test-dataflow-server.cfapps.io/apps/processor/xfmr?force=true" \
+	POST "http://<ROUTE>/apps/processor/xfmr?force=true" \
     -d "uri=maven://com.example:xfmr:${THE_VERSION}"

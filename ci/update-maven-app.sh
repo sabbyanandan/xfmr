@@ -8,8 +8,9 @@ THE_VERSION=$(grep -o '<revision[^"]*' pom.xml | sed -e 's/<revision>\(.*\)<\/re
 
 echo "Updating xfmr in CF with ${THE_VERSION} of Maven artifact"
 
+# Replace `<ROUTE>` with the route of SCDF-server running in CF.
 curl \
 	-X \
-	POST "http://sabby-test-dataflow-server.cfapps.io/streams/deployments/update/fooxfmr" \
+	POST "http://<ROUTE>/streams/deployments/update/fooxfmr" \
     -d '{"updateProperties":{"version.xfmr":"'"${THE_VERSION}"'"},"releaseName":"fooxfmr","packageIdentifier":{"packageName":"fooxfmr"}}' \
     -H "Content-Type: application/json"

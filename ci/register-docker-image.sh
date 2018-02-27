@@ -8,8 +8,9 @@ THE_VERSION=$(grep -o '<revision[^"]*' pom.xml | sed -e 's/<revision>\(.*\)<\/re
 
 echo "Registering xfmr ${THE_VERSION}"
 
+# Replace `<HOST>` with the hostname of the SCDF-server running in Kubernetes.
 curl \
 	-X \
-	POST "http://35.224.13.209/apps/processor/xfmr?force=true" \
+	POST "http://<HOST>/apps/processor/xfmr?force=true" \
 	-uuser:password \
     -d "uri=docker:sabby/xfmr:${THE_VERSION}"

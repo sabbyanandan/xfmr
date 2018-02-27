@@ -8,9 +8,10 @@ THE_VERSION=$(grep -o '<revision[^"]*' pom.xml | sed -e 's/<revision>\(.*\)<\/re
 
 echo "Updating xfmr in K8S with ${THE_VERSION} of Docker Image"
 
+# Replace `<HOST>` with the hostname of the SCDF-server running in Kubernetes.
 curl \
 	-X \
-	POST "http://35.224.13.209/streams/deployments/update/barxfmr" \
+	POST "http://<HOST>/streams/deployments/update/barxfmr" \
 	-uuser:password \
     -d '{"updateProperties":{"version.xfmr":"'"${THE_VERSION}"'"},"releaseName":"barxfmr","packageIdentifier":{"packageName":"barxfmr"}}' \
     -H "Content-Type: application/json"
