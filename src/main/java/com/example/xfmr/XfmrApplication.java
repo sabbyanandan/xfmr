@@ -24,6 +24,6 @@ public class XfmrApplication {
 		if (message == null) {
 			return null;
 		}
-		return "The Security Number = " + String.valueOf(message).replaceAll("^[0-9]{3}-[0-9]{2}", "xxx-xx");
+		return "The Security Number = " + message ;
 	}
 }
