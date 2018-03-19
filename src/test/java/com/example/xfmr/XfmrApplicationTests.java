@@ -30,6 +30,6 @@ public class XfmrApplicationTests {
 		transformedPayload = app.transform("888-33-4444");
 		assertTrue(transformedPayload != null);
 		assertThat(transformedPayload, not(""));
-		assertThat(transformedPayload, is("The Security Number = yyy-yy-4444"));
+		assertThat(transformedPayload, is("The Security Number = xxx-xx-4444"));
 	}
 }
