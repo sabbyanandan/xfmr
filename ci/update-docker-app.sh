@@ -11,7 +11,7 @@ echo "Updating xfmr in K8S with ${THE_VERSION} of Docker Image"
 # Replace `<HOST>` with the hostname of the SCDF-server running in Kubernetes.
 curl \
 	-X \
-	POST "http://35.184.139.195/streams/deployments/update/barxfmr" \
+	POST "http://35.225.113.91/streams/deployments/update/barxfmr" \
 	-uuser:password \
     -d '{"updateProperties":{"version.xfmr":"'"${THE_VERSION}"'"},"releaseName":"barxfmr","packageIdentifier":{"packageName":"barxfmr"}}' \
     -H "Content-Type: application/json"
