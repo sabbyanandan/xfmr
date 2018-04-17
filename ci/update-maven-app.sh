@@ -13,4 +13,5 @@ curl \
 	-X \
 	POST "http://sabby-test-dataflow-server.cfapps.io/streams/deployments/update/fooxfmr" \
     -d '{"updateProperties":{"version.xfmr":"'"${THE_VERSION}"'"},"releaseName":"fooxfmr","packageIdentifier":{"packageName":"fooxfmr"}}' \
-    -H "Content-Type: application/json"
+    -H "Content-Type: application/json" \
+    -v

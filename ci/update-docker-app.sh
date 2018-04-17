@@ -14,4 +14,5 @@ curl \
 	POST "http://35.225.113.91/streams/deployments/update/barxfmr" \
 	-uuser:password \
     -d '{"updateProperties":{"version.xfmr":"'"${THE_VERSION}"'"},"releaseName":"barxfmr","packageIdentifier":{"packageName":"barxfmr"}}' \
-    -H "Content-Type: application/json"
+    -H "Content-Type: application/json" \
+	-v

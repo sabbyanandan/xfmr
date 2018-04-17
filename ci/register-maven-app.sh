@@ -12,4 +12,5 @@ echo "Registering xfmr ${THE_VERSION}"
 curl \
 	-X \
 	POST "http://sabby-test-dataflow-server.cfapps.io/apps/processor/xfmr?force=true" \
-    -d "uri=maven://com.example:xfmr:${THE_VERSION}"
+    -d "uri=maven://com.example:xfmr:${THE_VERSION}" \
+	-v
