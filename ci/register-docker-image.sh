@@ -11,7 +11,7 @@ echo "Registering xfmr ${THE_VERSION}"
 # Replace `<HOST>` with the hostname of the SCDF-server running in Kubernetes.
 curl \
 	-X \
-	POST "http://35.226.5.70/apps/processor/xfmr?force=true" \
+	POST "http://35.235.92.80/apps/processor/xfmr?force=true" \
 	-uuser:password \
     -d "uri=docker:sabby/xfmr:${THE_VERSION}" \
 	-v
