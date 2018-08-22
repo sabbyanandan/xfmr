@@ -34,6 +34,6 @@ public class XfmrApplicationIntegrationTests {
     public void inAndOutTest() {
         channels.input().send(new GenericMessage<>("111-22-3333"));
         assertThat(collector.forChannel(channels.output()),
-                receivesPayloadThat(is("The Security Number = xxx-xx-3333")));
+                receivesPayloadThat(is("The Security Number = 111-22-3333")));
     }
 }
