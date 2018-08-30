@@ -14,4 +14,5 @@ curl \
 	POST "http://35.230.5.225/apps/processor/xfmr?force=true" \
 	-uuser:password \
     -d "uri=docker:sabby/xfmr:${THE_VERSION}" \
+	-d "metadata-uri=maven://org.springframework.cloud.stream.app:cassandra-sink-rabbit:jar:metadata:1.3.1.RELEASE" \
 	-v
