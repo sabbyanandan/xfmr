@@ -19,6 +19,7 @@ spring-shell.log
 target/
 test-output
 credentials.yml
+foocon.yml
 
 # Eclipse artifacts, including WTP generated manifests
 .classpath

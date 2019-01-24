@@ -1,0 +1,55 @@
+---
+resource_types:
+- name: artifactory-resource
+  type: docker-image
+  source:
+    source: {repository: springio/artifactory-resource, tag: latest}
+
+
+
+resources:
+- name: artifactory-repository
+  type: artifactory-resource
+  check_every: 1m
+  source:
+    endpoint: ((artifactory_uri))
+    username: ((artifactory_username))
+    password: ((artifactory_password))
+    build_name: my-app-build
+
+- name: git-repo
+  type: git
+  source:
+    uri: https://github.com/sabbyanandan/xfmr.git
+    branch: master
+    ignore_paths:
+    - ci/docker-image/*
+
+- name: xfmr-latest-commit-image
+  type: docker-image
+  source:
+    repository: sabby/xfmr
+    username: ((docker_username))
+    password: ((docker_password))
+
+
+
+jobs:
+- name: 1-build-an-artifact
+  plan:
+  - get: git-repo
+    trigger: true
+  - task: build
+    file: git-repo/ci/latest/deploy.yml
+  - aggregate:
+    - put: artifactory-repository
+      params:
+        repo: libs-snapshot-local
+        build_number: "${BUILD_ID}"
+        folder: distribution-repository
+        build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
+        disable_checksum_uploads: true
+    - put: xfmr-latest-commit-image
+      params:
+        build: docker-image
+        tag: docker-image/projectVersion
