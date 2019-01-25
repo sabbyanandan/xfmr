@@ -2,7 +2,7 @@
 
 set -e -u
 
-cd xfmr
+cd git-repo
 
 THE_VERSION=$(grep -o '<revision[^"]*' pom.xml | sed -e 's/<revision>\(.*\)<\/revision>/\1/')
 
