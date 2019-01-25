@@ -97,9 +97,9 @@ jobs:
       - 1-build-app-artifact
   - aggregate:
     - task: 2-1-register-docker
-      file: xfmr/ci/latest/register-docker-image.yml
+      file: git-repo/ci/latest/register-docker-image.yml
     - task: 2-2-register-maven
-      file: xfmr/ci/latest/register-maven-app.yml
+      file: git-repo/ci/latest/register-maven-app.yml
 
 - name: blanket-docker-image
   public: true
