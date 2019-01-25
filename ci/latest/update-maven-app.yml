@@ -11,4 +11,4 @@ inputs:
 - name: distribution-repository
 
 run:
-  path: git-repo/ci/update-maven-app.sh
+  path: git-repo/ci/latest/update-maven-app.sh

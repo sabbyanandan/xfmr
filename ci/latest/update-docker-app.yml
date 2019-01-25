@@ -11,4 +11,4 @@
   - name: distribution-repository
   
   run:
-    path: git-repo/ci/update-docker-app.sh
+    path: git-repo/ci/latest/update-docker-app.sh
