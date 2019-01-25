@@ -33,6 +33,28 @@ resources:
 
 
 
+# Docker Images
+- name: get-alpine-latest
+  type: docker-image
+  source:
+    repository: alpine
+    tag:        latest
+- name: build-blanket-docker-image-on-new-commits
+  type: git
+  source:
+    uri:    https://github.com/sabbyanandan/xfmr.git
+    branch: master
+    paths:
+    - ci/docker-image/*
+- name: build-blanket-docker-image-for-app-ops
+  type: docker-image
+  source:
+    repository: sabby/blanket-docker-image-for-app-ops
+    username:   ((docker_username))
+    password:   ((docker_password))
+
+
+
 jobs:
 - name: 1-build-app-artifact
   plan:
@@ -78,3 +100,15 @@ jobs:
       file: xfmr/ci/latest/register-docker-image.yml
     - task: 2-2-register-maven
       file: xfmr/ci/latest/register-maven-app.yml
+
+- name: blanket-docker-image
+  public: true
+  plan:
+  - aggregate:
+    - get: build-blanket-docker-image-on-new-commits
+      trigger: true
+    - get: get-alpine-latest
+      trigger: true
+  - put: build-blanket-docker-image-for-app-ops
+    params:
+      build: docker-image/ci/docker-image
