@@ -9,7 +9,7 @@ image_resource:
 inputs:
 - name: git-repo
 - name: distribution-repository
-- name: blanket-docker-image
+- name: docker-image
 
 run:
   path: git-repo/ci/latest/register-docker-image.sh
