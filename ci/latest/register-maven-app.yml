@@ -11,4 +11,4 @@ inputs:
 - name: distribution-repository
 
 run:
-  path: xfmr/ci/latest/register-maven-app.sh
+  path: git-repo/ci/latest/register-maven-app.sh

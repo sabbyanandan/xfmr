@@ -111,4 +111,4 @@ jobs:
       trigger: true
   - put: build-blanket-docker-image-for-app-ops
     params:
-      build: docker-image/ci/docker-image
+      build: build-blanket-docker-image-on-new-commits/ci/docker-image

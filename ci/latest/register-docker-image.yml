@@ -12,4 +12,4 @@ inputs:
 - name: blanket-docker-image
 
 run:
-  path: xfmr/ci/latest/register-docker-image.sh
+  path: git-repo/ci/latest/register-docker-image.sh
