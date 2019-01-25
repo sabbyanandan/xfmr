@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: sabby/xfmr-register
+
+inputs:
+- name: git-repo
+- name: distribution-repository
+- name: docker-image
+
+run:
+  path: xfmr/ci/latest/register-docker-image.sh

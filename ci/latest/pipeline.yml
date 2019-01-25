@@ -2,21 +2,11 @@
 resource_types:
 - name: artifactory-resource
   type: docker-image
-  source:
-    source: {repository: springio/artifactory-resource, tag: latest}
+  source: {repository: springio/artifactory-resource, tag: 0.0.6}
 
 
 
 resources:
-- name: artifactory-repository
-  type: artifactory-resource
-  check_every: 1m
-  source:
-    endpoint: ((artifactory_uri))
-    username: ((artifactory_username))
-    password: ((artifactory_password))
-    build_name: my-app-build
-
 - name: git-repo
   type: git
   source:
@@ -25,7 +15,16 @@ resources:
     ignore_paths:
     - ci/docker-image/*
 
-- name: xfmr-latest-commit-image
+- name: 1-1-app-latest-artifactory-upload
+  type: artifactory-resource
+  check_every: 1m
+  source:
+    uri: ((artifactory_uri))
+    username: ((artifactory_username))
+    password: ((artifactory_password))
+    build_name: my-app-build
+
+- name: 1-2-app-latest-image-push
   type: docker-image
   source:
     repository: sabby/xfmr
@@ -35,21 +34,47 @@ resources:
 
 
 jobs:
-- name: 1-build-an-artifact
+- name: 1-build-app-artifact
   plan:
   - get: git-repo
     trigger: true
   - task: build
     file: git-repo/ci/latest/deploy.yml
   - aggregate:
-    - put: artifactory-repository
+    - put: 1-1-app-latest-artifactory-upload
       params:
         repo: libs-snapshot-local
         build_number: "${BUILD_ID}"
         folder: distribution-repository
         build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
         disable_checksum_uploads: true
-    - put: xfmr-latest-commit-image
+    - put: 1-2-app-latest-image-push
       params:
         build: docker-image
         tag: docker-image/projectVersion
+
+- name: 2-register-app-artifact
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: git-repo
+      passed:
+      - 1-build-app-artifact
+    - get: distribution-repository
+      resource: 1-1-app-latest-artifactory-upload
+      trigger: true
+      passed:
+      - 1-build-app-artifact
+      params:
+        generate_maven_metadata: true
+    - get: docker-image
+      resource: 1-2-app-latest-image-push
+      trigger: true
+      passed:
+      - 1-build-app-artifact
+  - aggregate:
+    - task: 2-1-register-docker
+      file: xfmr/ci/latest/register-docker-image.yml
+    - task: 2-2-register-maven
+      file: xfmr/ci/latest/register-maven-app.yml
