@@ -96,10 +96,39 @@ jobs:
       passed:
       - 1-build-app-artifact
   - aggregate:
-    - task: 2-1-register-docker
+    - task: 2-1-register-docker-app
       file: git-repo/ci/latest/register-docker-image.yml
-    - task: 2-2-register-maven
+    - task: 2-2-register-maven-app
       file: git-repo/ci/latest/register-maven-app.yml
+
+- name: 3-update-app-artifact
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: git-repo
+      passed:
+      - 2-register-app-artifact
+    - get: distribution-repository
+      resource: 1-1-app-latest-artifactory-upload
+      trigger: true
+      passed:
+      - 2-register-app-artifact
+      params:
+        generate_maven_metadata: true
+    - get: docker-image
+      resource: 1-2-app-latest-image-push
+      trigger: true
+      passed:
+      - 2-register-app-artifact
+  - aggregate:
+    - task: 3-1-update-docker-app
+      file: git-repo/ci/latest/update-docker-app.yml
+    - task: 3-2-update-maven-app
+      file: git-repo/ci/latest/update-maven-app.yml
+
+
+
 
 - name: blanket-docker-image
   public: true
