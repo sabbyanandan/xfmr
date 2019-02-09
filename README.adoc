@@ -73,3 +73,9 @@ NOTE: `credentials.yml` is intentionally ignored from the repo. You need to crea
 == Test Data
 
 To simulate incoming data, `data.sh` script generates random security numbers of format `xxx-xx-xxxx`. The script invokes the `http-source` application URL/route in the platform, with the generated security number as the payload in the message envelope.
+
+== Demo Recording
+
+A live demonstration of this was presented at the Spring webinar. The demo starts at ~41.25.
+
+video::n6fS-KmN0zI[youtube]
