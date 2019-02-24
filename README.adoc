@@ -76,6 +76,6 @@ To simulate incoming data, `data.sh` script generates random security numbers of
 
 == Demo Recording
 
-A live demonstration of this was link:https://www.youtube.com/watch?v=n6fS-KmN0zI[presented at the Spring webinar]. The demo starts at ~41.25.
+A live demonstration of this was link:https://youtu.be/n6fS-KmN0zI?t=2484[presented at the Spring webinar]. The demo starts at ~41.25.
 
 video::n6fS-KmN0zI[youtube]
